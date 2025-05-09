@@ -10,7 +10,7 @@ function getParam(name) {
     const section = document.querySelector("main section");
   
     try {
-      const response = await fetch("legendy.json");
+      const response = await fetch("https://adrian-2040.github.io/legendy-pilki/legendy.json");
       if (!response.ok) throw new Error("Błąd podczas pobierania danych");
   
       const legendy = await response.json();
