@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Kontakt</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <header><h1>Kontakt</h1></header>
+
+  <nav>
+    <ul>
+      <li><a href="index.html">Strona Główna</a></li>
+      <li><a href="lista.html">Lista Legend</a></li>
+      <li><a href="szczegoly.html">Szczegóły</a></li>
+      <li><a href="trzykolumny.html">Historia Piłki Nożnej</a></li>
+      <li><a href="kontakt.html">Kontakt</a></li>
+    </ul>
+  </nav>
+
+  <main>
+    <form class="contact-form">
+      <label for="name">Imię:</label>
+      <input type="text" id="name" name="name" required />
+
+      <label for="email">Email:</label>
+      <input type="email" id="email" name="email" required />
+
+      <label for="message">Wiadomość:</label>
+      <textarea id="message" name="message" rows="5" required></textarea>
+
+      <button type="submit">Wyślij</button>
+    </form>
+  </main>
+
+  <footer>
+    <p>&copy; 2025 Legendy Piłki Nożnej</p>
+  </footer>
+
+  <script src="kontakt.js"></script>
+</body>
+</html>
