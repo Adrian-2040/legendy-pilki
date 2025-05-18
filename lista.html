@@ -22,45 +22,223 @@
   <main>
     <section>
       <h2>Legendy</h2>
+
+      <div class="controls">
+        <input type="text" id="searchInput" placeholder="Szukaj legendy">
+        <select id="sortSelect">
+          <option value="name-asc">Sortuj A-Z (Imię i nazwisko)</option>
+          <option value="name-desc">Sortuj Z-A (Imię i nazwisko)</option>
+        </select>
+
+        <select id="filterSelect">
+          <option value="">Wszystkie narodowości</option>
+          <option value="Anglia">Anglia</option>
+          <option value="Niemcy">Niemcy</option>
+          <option value="Brazylia">Brazylia</option>
+          <option value="Francja">Francja</option>
+          <option value="Włochy">Włochy</option>
+        </select>
+      </div>
+
       <div class="legend-cards">
         <div class="legend-card">
           <h3>Bobby Charlton</h3>
-          <a href="szczegoly.html?id=1">Zobacz szczegóły</a>
+          <a href="szczegoly.html?id=1" onclick="zapiszLegende('1')">Zobacz szczegóły</a>
         </div>
         <div class="legend-card">
           <h3>Franz Beckenbauer</h3>
-          <a href="szczegoly.html?id=2">Zobacz szczegóły</a>
+          <a href="szczegoly.html?id=2" onclick="zapiszLegende('2')">Zobacz szczegóły</a>
         </div>
         <div class="legend-card">
           <h3>Gerd Müller</h3>
-          <a href="szczegoly.html?id=3">Zobacz szczegóły</a>
+          <a href="szczegoly.html?id=3" onclick="zapiszLegende('3')">Zobacz szczegóły</a>
         </div>
         <div class="legend-card">
           <h3>Paolo Rossi</h3>
-          <a href="szczegoly.html?id=4">Zobacz szczegóły</a>
+          <a href="szczegoly.html?id=4" onclick="zapiszLegende('4')">Zobacz szczegóły</a>
         </div>
         <div class="legend-card">
           <h3>Zinédine Zidane</h3>
-          <a href="szczegoly.html?id=5">Zobacz szczegóły</a>
+          <a href="szczegoly.html?id=5" onclick="zapiszLegende('5')">Zobacz szczegóły</a>
         </div>
         <div class="legend-card">
           <h3>Rivaldo</h3>
-          <a href="szczegoly.html?id=6">Zobacz szczegóły</a>
+          <a href="szczegoly.html?id=6" onclick="zapiszLegende('6')">Zobacz szczegóły</a>
         </div>
         <div class="legend-card">
           <h3>Ronaldinho</h3>
-          <a href="szczegoly.html?id=7">Zobacz szczegóły</a>
+          <a href="szczegoly.html?id=7" onclick="zapiszLegende('7')">Zobacz szczegóły</a>
         </div>
         <div class="legend-card">
           <h3>Kaká</h3>
-          <a href="szczegoly.html?id=8">Zobacz szczegóły</a>
+          <a href="szczegoly.html?id=8" onclick="zapiszLegende('8')">Zobacz szczegóły</a>
         </div>
       </div>
+
+      <div class="pagination">
+      </div>    
     </section>
   </main>
 
   <footer>
     <p>&copy; 2025 Legendy Piłki Nożnej</p>
   </footer>
+
+  <script src="legendy.js"></script> 
+  
+  <script>
+    function zapiszLegende(id) {
+      localStorage.setItem("ostatniaLegendaId", id);
+    }
+
+     // Nowy skrypt dla paginacji, sortowania i wyszukiwania
+     document.addEventListener('DOMContentLoaded', () => {
+      // Upewnij się, że dane `legendy` z legendy.js są dostępne
+      if (typeof legendy === 'undefined') {
+        console.error("Dane legend nie zostały załadowane!");
+        document.querySelector('.legend-cards').innerHTML = "<p>Błąd ładowania danych. Sprawdź konsolę.</p>";
+        return;
+      }
+
+      const legendyData = [...legendy]; // Pracuj na kopii danych
+      let currentPage = 1;
+      const itemsPerPage = 4; // Ile legend na stronę
+      let searchTerm = '';
+      let sortCriteria = 'name-asc'; // Domyślne sortowanie
+      let nationalityFilter = '';
+
+      const searchInputElement = document.getElementById('searchInput');
+      const sortSelectElement = document.getElementById('sortSelect');
+      const filterSelectElement = document.getElementById('filterSelect');
+      const legendCardsContainerElement = document.querySelector('.legend-cards');
+      const paginationContainerElement = document.querySelector('.pagination');
+
+      function renderLegendCards(legendsToRender) {
+        legendCardsContainerElement.innerHTML = ''; // Wyczyść istniejące karty
+        if (legendsToRender.length === 0) {
+          legendCardsContainerElement.innerHTML = '<p>Nie znaleziono legend pasujących do kryteriów.</p>';
+          return;
+        }
+        legendsToRender.forEach(legenda => {
+          const card = document.createElement('div');
+          card.className = 'legend-card';
+          card.innerHTML = `
+            <h3>${legenda.imie}</h3>
+            <p><strong>Kraj:</strong> ${legenda.narodowosc}</p>
+            <a href="szczegoly.html?id=${legenda.id}" onclick="zapiszLegende('${legenda.id}')">Zobacz szczegóły</a>
+          `;
+          legendCardsContainerElement.appendChild(card);
+        });
+      }
+
+      function renderPaginationControls(totalItems) {
+        paginationContainerElement.innerHTML = ''; // Wyczyść istniejące kontrolki
+        const totalPages = Math.ceil(totalItems / itemsPerPage);
+
+        if (totalPages <= 1) return; // Paginacja nie jest potrzebna
+
+        // Przycisk "Poprzednia"
+        if (currentPage > 1) {
+          const prevButton = document.createElement('button');
+          prevButton.textContent = 'Poprzednia';
+          prevButton.addEventListener('click', () => {
+            currentPage--;
+            displayCurrentPage();
+          });
+          paginationContainerElement.appendChild(prevButton);
+        }
+
+        // Numery stron (prosta implementacja)
+        for (let i = 1; i <= totalPages; i++) {
+          const pageButton = document.createElement('button');
+          pageButton.textContent = i;
+          if (i === currentPage) {
+            pageButton.disabled = true; // Wyłącz przycisk bieżącej strony
+            pageButton.style.fontWeight = 'bold';
+          }
+          pageButton.addEventListener('click', () => {
+            currentPage = i;
+            displayCurrentPage();
+          });
+          paginationContainerElement.appendChild(pageButton);
+        }
+
+        // Przycisk "Następna"
+        if (currentPage < totalPages) {
+          const nextButton = document.createElement('button');
+          nextButton.textContent = 'Następna';
+          nextButton.addEventListener('click', () => {
+            currentPage++;
+            displayCurrentPage();
+          });
+          paginationContainerElement.appendChild(nextButton);
+        }
+      }
+
+      function applyFiltersAndSort() {
+        let processedLegends = [...legendyData];
+
+        // Filtr wyszukiwania
+        if (searchTerm) {
+          processedLegends = processedLegends.filter(legenda =>
+            legenda.imie.toLowerCase().includes(searchTerm.toLowerCase()) ||
+            legenda.opis.toLowerCase().includes(searchTerm.toLowerCase()) // Możesz też przeszukiwać historię itp.
+          );
+        }
+
+        // Filtrowanie po narodowości
+        if (nationalityFilter) {
+          processedLegends = processedLegends.filter(legenda =>
+            legenda.narodowosc === nationalityFilter
+          );
+        }
+
+        // Sortowanie
+        switch (sortCriteria) {
+          case 'name-asc':
+            processedLegends.sort((a, b) => a.imie.localeCompare(b.narodowosc, 'pl', { sensitivity: 'base' }));
+            break;
+          case 'country-asc':
+            processedLegends.sort((a, b) => b.imie.localeCompare(a.imie, 'pl', { sensitivity: 'base' }));
+            break;
+        }
+        return processedLegends;
+      }
+
+      function displayCurrentPage() {
+        const filteredAndSortedLegends = applyFiltersAndSort();
+        
+        const startIndex = (currentPage - 1) * itemsPerPage;
+        const endIndex = startIndex + itemsPerPage;
+        const paginatedLegends = filteredAndSortedLegends.slice(startIndex, endIndex);
+
+        renderLegendCards(paginatedLegends);
+        renderPaginationControls(filteredAndSortedLegends.length);
+      }
+
+      // Nasłuchiwacze zdarzeń
+      searchInputElement.addEventListener('input', (e) => {
+        searchTerm = e.target.value;
+        currentPage = 1; // Resetuj do pierwszej strony przy nowym wyszukiwaniu
+        displayCurrentPage();
+      });
+
+      sortSelectElement.addEventListener('change', (e) => {
+        sortCriteria = e.target.value;
+        currentPage = 1; // Resetuj do pierwszej strony przy zmianie sortowania
+        displayCurrentPage();
+      });
+
+      filterSelectElement.addEventListener('change', (e) => {
+        nationalityFilter = e.target.value;
+        currentPage = 1;
+        displayCurrentPage();
+      });
+
+      // Początkowe wyświetlenie legend
+      displayCurrentPage();
+    });
+  </script>
+  
 </body>
 </html>
