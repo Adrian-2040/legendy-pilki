@@ -181,6 +181,59 @@ footer {
     width: 100%;
 }
 
+/* Style dla kontrolek wyszukiwania i sortowania */
+.controls {
+    display: flex;
+    gap: 15px; /* Odstęp między elementami */
+    margin-bottom: 20px;
+    align-items: center;
+    flex-wrap: wrap; /* Pozwala na zawijanie na mniejszych ekranach */
+}
+
+.controls input[type="text"] {
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 1em;
+    flex-grow: 1; /* Pozwala polu wyszukiwania zająć dostępną przestrzeń */
+    min-width: 200px; /* Minimalna szerokość dla pola wyszukiwania */
+}
+
+.controls select {
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 1em;
+    background-color: white; /* Lepszy wygląd na niektórych przeglądarkach */
+}
+
+/* Style dla paginacji */
+.pagination {
+    margin-top: 30px; /* Większy odstęp od kart */
+    margin-bottom: 70px; /* Odstęp od stopki, szczególnie jeśli jest przyklejona */
+    text-align: center;
+}
+
+.pagination button {
+    margin: 0 5px; /* Odstęp między przyciskami paginacji */
+    padding: 8px 12px;
+    background-color: #2980b9; /* Ten sam kolor co inne przyciski */
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.pagination button:hover:not(:disabled) {
+    background-color: #3498db; /* Ten sam hover co inne przyciski */
+}
+
+.pagination button:disabled {
+    background-color: #95a5a6; /* Kolor dla nieaktywnego przycisku */
+    cursor: not-allowed;
+}
+
 /* --- Nowe style dla listy legend jako karty --- */
 .legend-cards {
     display: grid;
