@@ -33,6 +33,59 @@ Dzięki temu szczegóły legend są ładowane dynamicznie na podstawie ID w URL 
     <p>&copy; 2025 Legendy Piłki Nożnej</p>
   </footer>
 
-  <script src="script.js"></script>
+  <script src="legendy.js"></script>
+  <script>
+    // Pobiera parametr z URL
+    function getParam(name) {
+      const urlParams = new URLSearchParams(window.location.search);
+      return urlParams.get(name);
+    }
+
+    function pokazLegende() {
+      const section = document.querySelector("main section");
+      const id = getParam("id") || localStorage.getItem("ostatniaLegendaId");
+
+      if (!id) {
+        section.innerHTML = `
+          <p>Nie wybrano legendy.</p>
+          <button onclick="history.back()">Wróć</button>
+        `;
+        return;
+      }
+
+      // Zapisz ID w localStorage, aby pamiętać ostatni wybór
+      localStorage.setItem("ostatniaLegendaId", id);
+
+      // Znajdź legendę w tablicy
+      const legenda = legendy.find(item => item.id === id);
+
+      if (!legenda) {
+        section.innerHTML = `
+          <p>Nie znaleziono legendy.</p>
+          <button onclick="history.back()">Wróć</button>
+        `;
+        return;
+      }
+
+      const ikonyHTML = legenda.ikony.map(i => `<li>${i}</li>`).join("");
+
+      section.innerHTML = `
+        <div class="legenda-wrapper">
+          <div class="legenda-text">
+            <h2>${legenda.imie}</h2>
+            <p><strong>${legenda.opis}</strong></p>
+            <p>${legenda.historia}</p>
+            <ul class="ikony">${ikonyHTML}</ul>
+            <button onclick="history.back()">Wróć</button>
+          </div>
+          <div class="legenda-obraz">
+            <img src="${legenda.obraz}" alt="${legenda.imie}" />
+          </div>
+        </div>
+      `;
+    }
+
+    document.addEventListener("DOMContentLoaded", pokazLegende);
+  </script>
 </body>
 </html>
